@@ -1,24 +1,31 @@
 const oracledb = require('oracledb');
 const http = require('http');
+const fs = require('fs');
 const hostname = 'localhost';
 const port = 8000;
 
 var password = 'VBGOIPdqRcM1YwtK2bFukWk5';
 
 const server = http.createServer(function (req, res) {
-      res.writeHead(200, { "Content-Type": "text/plain" });
-
-      // Send the response body "Hello World"
-      res.end("Hello World\n");
+      fs.readFile('templates/index.html', 'utf-8', (err, content) => {
+            if (err) {
+                  console.log('Error reading index.html:', err);
+                  res.end();
+            } else {
+                  res.writeHead(200, { "Content-Type": "text/html" });
+                  res.write(content);
+                  res.end();
+            }
+      });
 });
 
 server.listen(port, hostname, function () {
-  console.log(`Server running at http://${hostname}:${port}/`);
+      console.log(`Server running at http://${hostname}:${port}/`);
 });
 
 async function checkConnection() {
       let connection;
-      
+
       try {
             connection = await oracledb.getConnection({
                   user: 'lauren.bartyczak',
@@ -84,7 +91,7 @@ async function checkConnection() {
                         console.error(e.message);
                   }
             }
-      
+
       }
 }
 
