@@ -1,0 +1,16 @@
+#datasets
+Arrests.csv
+Chicago_Population_Counts.csv
+Crimes_-_2001_to_Present.csv
+Police_Sentiment_Scores.csv
+Police_Stations.csv
+
+#altered datasets
+arrestts.csv
+crime.csv
+sentiment.csv
+stations.csv
+
+#unused dataset alterers
+sent.py
+stations.py
