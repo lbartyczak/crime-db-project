@@ -76,6 +76,10 @@
         });
 
         document.getElementById('submit').addEventListener('click', async () => {
+            chart.data.labels = [];
+            chart.data.datasets = [];
+            chart.update();
+            
             const questionId = document.getElementById('questions').value;
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}`);
             const data = await response.json();
