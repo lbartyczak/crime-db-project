@@ -4,12 +4,14 @@ Chicago_Population_Counts.csv
 Crimes_-_2001_to_Present.csv
 Police_Sentiment_Scores.csv
 Police_Stations.csv
+Violence_REduction_-_Victim_Demographics_-_Aggregated.csv
 
 #altered datasets
 arrestts.csv
 crime.csv
 sentiment.csv
 stations.csv
+victims.csv
 
 #unused dataset alterers
 sent.py
@@ -20,3 +22,5 @@ testotpt.js
 package-lock.json
 package.json
 node_modules/
+queries.sql
+password.txt

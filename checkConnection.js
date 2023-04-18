@@ -5,7 +5,11 @@ const url = require('url');
 const hostname = 'localhost';
 const port = 8000;
 
-var password = 'VBGOIPdqRcM1YwtK2bFukWk5';
+var password;
+fs.readFile('password.txt', 'utf8', function(err, data) {
+      if (err) throw err;
+      password = data;
+    });
 
 const server = http.createServer(async function (req, res) {
       const requestUrl = url.parse(req.url, true);
@@ -55,7 +59,8 @@ async function getData(questionId) {
             });
             console.log('connected to db');
 
-            if (questionId == '1')  return query1();
+            if (questionId == '0') return getCount();
+            else if (questionId == '1')  return query1();
             else if (questionId == '2') return query2();
             else if (questionId == '3') return query3();
 
@@ -63,6 +68,23 @@ async function getData(questionId) {
             console.error(e.message);
       }
 
+}
+
+/* COUNT TUPLES */
+async function getCount() {
+      result = await connection.execute(`
+      SELECT a.num + b.num 
+      FROM (
+          SELECT COUNT(*) num 
+          FROM cases
+          ) a, (
+          SELECT count(*) num 
+          FROM arrests 
+          ) b
+      `);
+
+      console.log(result);
+      return result.rows;
 }
 
 /* QUERY 1*/
@@ -104,7 +126,7 @@ async function query1() {
                         SELECT * 
                         FROM CASES
                         WHERE EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 03
-                        AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
+                        AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2023
                         )
                   )
             WHERE timeframe IS NOT NULL
@@ -112,24 +134,16 @@ async function query1() {
             )
             GROUP BY timeframe
             ORDER BY timeframe
-            `);
+      `);
+
+      console.log(result);
       return result.rows;
 }
 
 /* QUERY 2*/
 /* What is the average time (in days) between a crime and its first arrest if an arrest was made for the year 2022 */
 async function query2() {
-      let connection;
-
-      try {
-            connection = await oracledb.getConnection({
-                  user: 'lauren.bartyczak',
-                  password: password,
-                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
-            });
-            console.log('connected to db');
-
-            result = await connection.execute(`
+      result = await connection.execute(`
             SELECT month, ROUND(AVG(
                   EXTRACT(MINUTE FROM timediff) +
                   EXTRACT(HOUR FROM timediff) * 60 +
@@ -149,30 +163,19 @@ async function query2() {
                         GROUP BY casenumber
                       ) First_Arrests ON Crimes_2022.casenumber = First_Arrests.casenumber
                   )
-              GROUP BY month
-              ORDER BY month
-            `);
-            console.log(result);
-            return result.rows;
-      } catch (e) {
-            console.error(e.message);
-      }
+            GROUP BY month
+            ORDER BY month
+      `);
+
+      console.log(result);
+      return result.rows;
+ 
 }
 
 /* QUERY 3 */
 /* What are the top 3 rising types of crime over the last 9 years? */
 async function query3() {
-      let connection;
-
-      try {
-            connection = await oracledb.getConnection({
-                  user: 'lauren.bartyczak',
-                  password: password,
-                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
-            });
-            console.log('connected to db');
-
-            result = await connection.execute(`
+      result = await connection.execute(`
             SELECT EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) year, Cases.crime_type, count(*)
             FROM (
                 SELECT * 
@@ -193,13 +196,16 @@ async function query3() {
                     ORDER BY diff DESC
                     )
                 WHERE ROWNUM <= 3
-                ) rising_crimes JOIN Cases ON rising_crimes.crime_type = Cases.crime_type
+                ) rising_crimes 
+                JOIN 
+                Cases ON rising_crimes.crime_type = Cases.crime_type
             GROUP BY EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), Cases.crime_type
             ORDER BY year, crime_type
-            `);
-            console.log(result);
-            return result.rows;
-      } catch (e) {
-            console.error(e.message);
-      }
+      `);
+
+      console.log(result);
+      return result.rows;
 }
+
+/* QUERY 4 */
+/* */
