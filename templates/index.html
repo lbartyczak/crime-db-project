@@ -81,7 +81,7 @@
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}`);
             const data = await response.json();
 
-            if (questionId == 3) {
+            if (questionId == '3') {
                 const processedData = rawData.reduce((acc, [year, crimeType, amount]) => {
                     if (!acc.labels.includes(year)) {
                         acc.labels.push(year);
@@ -113,7 +113,7 @@
                 chart.data.datasets = datasets;
                 chart.update();
             }
-            else if (questionId == 2) {
+            else if (questionId == '2') {
                 const labels = data.map(item => item[0]);
                 const dataPoints = data.map(item => item[1]);
 
