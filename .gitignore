@@ -14,7 +14,6 @@ stations.csv
 victims.csv
 
 #unused dataset alterers
-sent.py
 stations.py
 
 #other files

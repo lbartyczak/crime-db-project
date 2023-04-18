@@ -63,6 +63,9 @@ async function getData(questionId) {
             else if (questionId == '1')  return query1();
             else if (questionId == '2') return query2();
             else if (questionId == '3') return query3();
+            else if (questionId == '4') return query4();
+            else if (questionId == '5') return query5();
+            else if (questionId == '6') return query6();
 
       } catch (e) {
             console.error(e.message);
@@ -208,4 +211,62 @@ async function query3() {
 }
 
 /* QUERY 4 */
+/* What is the difference in trends between two crime types (that the user selects) versus 
+others within a specific district?*/
+async function query4() {
+      data = [4, 'THEFT', 4, 'ASSAULT', 4, 'THEFT', 'ASSAULT'];
+      result = await connection.execute(`
+            SELECT a.yr, acount as type1, bcount as type2, ccount as "Others"
+            FROM (
+                    select crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, count(*) acount
+                    from Cases
+                    where (location_district = :1) and (crime_type = :2) /* allow user to select first crime of choice */
+                    group by crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
+                    ) a
+                    JOIN 
+                    (
+                    select crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, count(*) bcount
+                    from Cases
+                    where (location_district = :3) and (crime_type = :4) /* allow user to select second crime of choice*/
+                    group by crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
+                    ) b on a.yr = b.yr
+                    JOIN 
+                    (
+                    select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, count(*) ccount
+                    from Cases
+                    where (location_district = :5) 
+                    and crime_type not in (
+                                            select c.crime_type
+                                            from Cases c
+                                            where crime_type = :6 or crime_type = :7
+                                            )
+                    group by EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
+                    ) c on a.yr = c.yr
+            ORDER BY a.yr ASC
+            `, data);
+            
+      console.log(result);
+      return result.rows;
+}
+
+/* QUERY 5 */
+/* Does the ratio of no arrests in comparison to crimes each year affect how much Area 5 residents trust in the police? */
+async function query5() {
+      result = await connection.execute(`
+            
+      `);
+
+      console.log(result);
+      return result.rows;
+}
+
+/* QUERY 6 */
 /* */
+async function query6() {
+      result = await connection.execute(`
+            
+      `);
+
+      console.log(result);
+      return result.rows;
+}
