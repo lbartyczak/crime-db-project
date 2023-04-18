@@ -81,21 +81,55 @@
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}`);
             const data = await response.json();
 
+            if (questionId == 3) {
+                const processedData = rawData.reduce((acc, [year, crimeType, amount]) => {
+                    if (!acc.labels.includes(year)) {
+                        acc.labels.push(year);
+                    }
 
-            const labels = data.map(item => item[0]);
-            const dataPoints = data.map(item => item[1]);
+                    if (!acc.dataByCrimeType.hasOwnProperty(crimeType)) {
+                        acc.dataByCrimeType[crimeType] = Array(acc.labels.length).fill(null);
+                    }
 
-            const datasets = [{
-                label: 'Index',
-                data: dataPoints,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }];
+                    const index = acc.labels.indexOf(year);
+                    acc.dataByCrimeType[crimeType][index] = amount;
 
-            chart.data.labels = labels;
-            chart.data.datasets = datasets;
-            chart.update();
+                    return acc;
+                }, { labels: [], dataByCrimeType: {} });
+
+                const datasets = Object.entries(processedData.dataByCrimeType).map(([crimeType, dataPoints], index) => {
+                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)'];
+                    return {
+                        label: crimeType,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+                chart.data.labels = processedData.labels;
+                chart.data.datasets = datasets;
+                chart.update();
+            }
+            else if (questionId == 2) {
+                const labels = data.map(item => item[0]);
+                const dataPoints = data.map(item => item[1]);
+
+                const datasets = [{
+                    label: 'Index',
+                    data: dataPoints,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }];
+
+                chart.data.labels = labels;
+                chart.data.datasets = datasets;
+                chart.update();
+            }
+
         });
     </script>
 </body>
