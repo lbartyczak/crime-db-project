@@ -100,7 +100,7 @@ async function checkConnection() {
             ORDER BY timeframe
             `);
             console.log(result);
-            return result;
+            return result.rows;
       } catch (e) {
             console.error(e.message);
       }
