@@ -15,7 +15,7 @@ const server = http.createServer(async function (req, res) {
             const questionId = requestUrl.query.questionId;
 
             try {
-                  const data = await checkConnection();
+                  const data = await getData(questionId);
                   res.end(JSON.stringify(data));
             } catch (e) {
                   res.statusCode = 500;
@@ -44,9 +44,7 @@ server.listen(port, hostname, function () {
       console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-/* QUERY 1*/
-/* What is the average crime ocurrance across the hours of the day for the month of March, 2023? */
-async function query1() {
+async function getData(questionId) {
       let connection;
 
       try {
@@ -57,7 +55,20 @@ async function query1() {
             });
             console.log('connected to db');
 
-            result = await connection.execute(`
+            if (questionId == '1')  return query1();
+            else if (questionId == '2') return query2();
+            else if (questionId == '3') return query3();
+
+      } catch (e) {
+            console.error(e.message);
+      }
+
+}
+
+/* QUERY 1*/
+/* What is the average crime ocurrance across the hours of the day for the month of March, 2023? */
+async function query1() {
+      result = await connection.execute(`
             SELECT timeframe, ROUND(AVG(num),2) avg_hourly_crimerate
             FROM (
             SELECT timeframe, COUNT(*) num
@@ -102,11 +113,7 @@ async function query1() {
             GROUP BY timeframe
             ORDER BY timeframe
             `);
-            console.log(result);
-            return result.rows;
-      } catch (e) {
-            console.error(e.message);
-      }
+      return result.rows;
 }
 
 /* QUERY 2*/
