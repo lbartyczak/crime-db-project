@@ -9,7 +9,7 @@ var password = 'VBGOIPdqRcM1YwtK2bFukWk5';
 
 const server = http.createServer(async function (req, res) {
       const requestUrl = url.parse(req.url, true);
-      if (requestUrl.pathname === '/get-data') {
+      if (requestUrl.pathname.startsWith('/get-data')) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
             const questionId = requestUrl.query.questionId;
@@ -22,7 +22,7 @@ const server = http.createServer(async function (req, res) {
                   res.end(JSON.stringify({ error: e.message }));
             }
       }
-      else if (requestUrl.pathname === '/') {
+      else if (requestUrl.pathname.startsWith('/')) {
             fs.readFile('templates/index.html', 'utf-8', (err, content) => {
                   if (err) {
                         console.log('Error reading index.html:', err);
