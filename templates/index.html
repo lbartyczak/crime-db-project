@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,14 +14,17 @@
             margin-top: 30px;
             margin-bottom: 130px;
         }
+
         #submit {
             margin-top: 15px;
         }
+
         #additionalOptionsLabel {
             margin-top: 15px;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Trends in Crime Data in Chicago</h1>
@@ -33,7 +37,8 @@
                     <option value="2">Question 2</option>
                     <option value="3">Question 3</option>
                 </select>
-                <label for="additionalOptions" class="form-label" id="additionalOptionsLabel" style="display: none;">Additional options</label>
+                <label for="additionalOptions" class="form-label" id="additionalOptionsLabel"
+                    style="display: none;">Additional options</label>
                 <select class="form-select" id="additionalOptions" style="display: none;">
                     <!-- Add your additional options here -->
                     <option value="1">Option 1</option>
@@ -71,13 +76,26 @@
 
         document.getElementById('submit').addEventListener('click', async () => {
             const questionId = document.getElementById('questions').value;
-            const response = await fetch(`/get-data/${questionId}`);
+            const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}`);
             const data = await response.json();
 
-            chart.data.labels = data.labels;
-            chart.data.datasets = data.datasets;
+
+            const labels = data.map(item => item[0]);
+            const dataPoints = data.map(item => item[1]);
+
+            const datasets = [{
+                label: 'Index',
+                data: dataPoints,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }];
+
+            chart.data.labels = labels;
+            chart.data.datasets = datasets;
             chart.update();
         });
     </script>
 </body>
+
 </html>

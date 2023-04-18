@@ -6,17 +6,37 @@ const port = 8000;
 
 var password = 'VBGOIPdqRcM1YwtK2bFukWk5';
 
-const server = http.createServer(function (req, res) {
-      fs.readFile('templates/index.html', 'utf-8', (err, content) => {
-            if (err) {
-                  console.log('Error reading index.html:', err);
-                  res.end();
-            } else {
-                  res.writeHead(200, { "Content-Type": "text/html" });
-                  res.write(content);
-                  res.end();
+const server = http.createServer(async function (req, res) {
+      const requestUrl = url.parse(req.url, true);
+      if (requestUrl.pathname === '/get-data') {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            const questionId = requestUrl.query.questionId;
+
+            try {
+                  const data = await checkConnection();
+                  res.end(JSON.stringify(data));
+            } catch (e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
             }
-      });
+      }
+      else if (requestUrl.pathname === '/') {
+            fs.readFile('templates/index.html', 'utf-8', (err, content) => {
+                  if (err) {
+                        console.log('Error reading index.html:', err);
+                        res.end();
+                  } else {
+                        res.writeHead(200, { "Content-Type": "text/html" });
+                        res.write(content);
+                        res.end();
+                  }
+            });
+      }
+      else {
+            res.writeHead(404);
+            res.end();
+      }
 });
 
 server.listen(port, hostname, function () {
@@ -80,19 +100,8 @@ async function checkConnection() {
             ORDER BY timeframe
             `);
             console.log(result);
+            return result;
       } catch (e) {
             console.error(e.message);
-      } finally {
-            if (connection) {
-                  try {
-                        await connection.close();
-                        console.log('closed connection');
-                  } catch (e) {
-                        console.error(e.message);
-                  }
-            }
-
       }
 }
-
-checkConnection();
