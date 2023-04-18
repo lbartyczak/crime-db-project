@@ -14,3 +14,9 @@ stations.csv
 #unused dataset alterers
 sent.py
 stations.py
+
+#other files
+testotpt.js
+package-lock.json
+package.json
+node_modules/

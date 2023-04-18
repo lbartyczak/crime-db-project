@@ -44,7 +44,9 @@ server.listen(port, hostname, function () {
       console.log(`Server running at http://${hostname}:${port}/`);
 });
 
-async function checkConnection() {
+/* QUERY 1*/
+/* What is the average crime ocurrance across the hours of the day for the month of March, 2023? */
+async function query1() {
       let connection;
 
       try {
@@ -58,9 +60,9 @@ async function checkConnection() {
             result = await connection.execute(`
             SELECT timeframe, ROUND(AVG(num),2) avg_hourly_crimerate
             FROM (
-                SELECT timeframe, COUNT(*) num
-                FROM (
-                    SELECT CASE
+            SELECT timeframe, COUNT(*) num
+            FROM (
+                  SELECT CASE
                         WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 0 THEN '00:00-00:59'
                         WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 1 THEN '01:00-01:59'
                         WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 2 THEN '02:00-02:59'
@@ -87,18 +89,106 @@ async function checkConnection() {
                         WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 23 THEN '23:00-23:59'
                         END timeframe,
                         EXTRACT(DAY FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) day
-                    FROM (
+                  FROM (
                         SELECT * 
                         FROM CASES
-                        WHERE EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = EXTRACT(MONTH FROM TO_DATE('MAR', 'MON'))
-                        AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = EXTRACT(YEAR FROM TO_DATE('2022', 'YYYY'))
+                        WHERE EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 03
+                        AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
                         )
-                    )
-                WHERE timeframe IS NOT NULL
-                GROUP BY day, timeframe
-                )
+                  )
+            WHERE timeframe IS NOT NULL
+            GROUP BY day, timeframe
+            )
             GROUP BY timeframe
             ORDER BY timeframe
+            `);
+            console.log(result);
+            return result.rows;
+      } catch (e) {
+            console.error(e.message);
+      }
+}
+
+/* QUERY 2*/
+/* What is the average time (in days) between a crime and its first arrest if an arrest was made for the year 2022 */
+async function query2() {
+      let connection;
+
+      try {
+            connection = await oracledb.getConnection({
+                  user: 'lauren.bartyczak',
+                  password: password,
+                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
+            });
+            console.log('connected to db');
+
+            result = await connection.execute(`
+            SELECT month, ROUND(AVG(
+                  EXTRACT(MINUTE FROM timediff) +
+                  EXTRACT(HOUR FROM timediff) * 60 +
+                  EXTRACT(DAY FROM timediff) * 60 * 24) / 60 / 24, 2) avgtime
+            FROM (
+                  SELECT Crimes_2022.month, firstarrestdate - 
+                        TO_TIMESTAMP(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM') timediff
+                  FROM (
+                        SELECT EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) month, Cases.*
+                        FROM Cases
+                        WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
+                        ) Crimes_2022 
+                        JOIN (
+                        SELECT casenumber, TO_TIMESTAMP(MIN(TO_TIMESTAMP(dateofarrest, 'MM/DD/YYYY HH:MI:SS AM'))) firstarrestdate
+                        FROM Arrests
+                        WHERE casenumber IS NOT NULL
+                        GROUP BY casenumber
+                      ) First_Arrests ON Crimes_2022.casenumber = First_Arrests.casenumber
+                  )
+              GROUP BY month
+              ORDER BY month
+            `);
+            console.log(result);
+            return result.rows;
+      } catch (e) {
+            console.error(e.message);
+      }
+}
+
+/* QUERY 3 */
+/* What are the top 3 rising types of crime over the last 9 years? */
+async function query3() {
+      let connection;
+
+      try {
+            connection = await oracledb.getConnection({
+                  user: 'lauren.bartyczak',
+                  password: password,
+                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
+            });
+            console.log('connected to db');
+
+            result = await connection.execute(`
+            SELECT EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) year, Cases.crime_type, count(*)
+            FROM (
+                SELECT * 
+                FROM (
+                    SELECT crimes_2014.crime_type, crimes_2022.counts - crimes_2014.counts diff
+                    FROM (
+                        SELECT crime_type, COUNT(*) counts
+                        FROM Cases
+                        WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2014
+                        GROUP BY crime_type
+                        ) crimes_2014, (
+                        SELECT crime_type, COUNT(*) counts
+                        FROM Cases 
+                        WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
+                        GROUP BY crime_type
+                        ) crimes_2022
+                    WHERE crimes_2014.crime_type = crimes_2022.crime_type
+                    ORDER BY diff DESC
+                    )
+                WHERE ROWNUM <= 3
+                ) rising_crimes JOIN Cases ON rising_crimes.crime_type = Cases.crime_type
+            GROUP BY EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), Cases.crime_type
+            ORDER BY year, crime_type
             `);
             console.log(result);
             return result.rows;
