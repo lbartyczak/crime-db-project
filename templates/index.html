@@ -40,7 +40,6 @@
                 <label for="additionalOptions" class="form-label" id="additionalOptionsLabel"
                     style="display: none;">Additional options</label>
                 <select class="form-select" id="additionalOptions" style="display: none;">
-                    <!-- Add your additional options here -->
                     <option value="1">Option 1</option>
                     <option value="2">Option 2</option>
                     <option value="3">Option 3</option>
@@ -82,7 +81,7 @@
             const data = await response.json();
 
             if (questionId == '3') {
-                const processedData = rawData.reduce((acc, [year, crimeType, amount]) => {
+                const processedData = data.reduce((acc, [year, crimeType, amount]) => {
                     if (!acc.labels.includes(year)) {
                         acc.labels.push(year);
                     }
