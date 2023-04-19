@@ -14,11 +14,13 @@
             margin-top: 30px;
             margin-bottom: 130px;
         }
+
         h2 {
             text-align: center;
             margin-top: 10px;
             margin-bottom: 30px;
         }
+
         #submit {
             margin-top: 15px;
         }
@@ -43,6 +45,7 @@
                     <option value="3">Question 3</option>
                     <option value="4">Question 4</option>
                     <option value="5">Question 5</option>
+                    <option value="6">Question 6</option>
                     <option value="7">Get Database Count</option>
                 </select>
                 <div id="question4-options" style="display: none;">
@@ -143,16 +146,33 @@
             </div>
 
             <div class="col-md-8">
-                <canvas id="chart"></canvas>
+                <canvas id="chart1"></canvas>
+                <canvas id="chart2"></canvas>
             </div>
         </div>
     </div>
     <script>
         const hostname = 'localhost';
         const port = 8000;
-        const ctx = document.getElementById('chart').getContext('2d');
+        const ctx = document.getElementById('chart1').getContext('2d');
+        const ctx2 = document.getElementById('chart2').getContext('2d');
         var val;
-        const chart = new Chart(ctx, {
+        const chart1 = new Chart(ctx, {
+            type: 'line',
+            data: {},
+            options: {
+                scales: {
+                    y: {
+                        title: {}
+                    },
+                    x: {
+                        title: {}
+                    }
+                }
+            }
+        });
+
+        const chart2 = new Chart(ctx2, {
             type: 'line',
             data: {},
             options: {
@@ -179,12 +199,12 @@
         });
 
         document.getElementById('submit').addEventListener('click', async () => {
-            chart.data.labels = [];
-            chart.data.datasets = [];
-            chart.options.scales.y.title.display = false;
-            chart.options.scales.x.title.display = false;
-            chart.options.plugins.title.display = false;
-            chart.update();
+            chart1.data.labels = [];
+            chart1.data.datasets = [];
+            chart1.options.scales.y.title.display = false;
+            chart1.options.scales.x.title.display = false;
+            chart1.options.plugins.title.display = false;
+            chart1.update();
 
             const questionId = document.getElementById('questions').value;
             const district = document.getElementById('additionalOptions3')?.value ?? '';
@@ -193,7 +213,7 @@
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}&district=${district}&type1=${type1}&type2=${type2}`);
             const data = await response.json();
 
-            
+
             if (questionId == '3') {
                 const processedData = data.reduce((acc, [year, crimeType, amount]) => {
                     if (!acc.labels.includes(year)) {
@@ -222,18 +242,18 @@
                     };
                 });
 
-                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Year';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'What are the top 3 rising types of crime over the last 9 years?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = processedData.labels;
-                chart.data.datasets = datasets;
-                chart.update();
+                chart1.options.scales.y.title.text = 'Number of Crime Occurrances';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Year';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'What are the top 3 rising types of crime over the last 9 years?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = processedData.labels;
+                chart1.data.datasets = datasets;
+                chart1.update();
             }
             else if (questionId == '7') {
-                
+
             }
             else if (questionId == '1') {
                 const labels = data.map(item => item[0]);
@@ -247,15 +267,15 @@
                     borderWidth: 1
                 }];
 
-                chart.options.scales.y.title.text = 'Average Crime Rate';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Timeframe';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'What is the average crime ocurrance across the hours of the day for the month of March, 2023?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = labels;
-                chart.data.datasets = datasets;
-                chart.update();
+                chart1.options.scales.y.title.text = 'Average Crime Rate';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Timeframe';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'What is the average crime ocurrance across the hours of the day for the month of March, 2023?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = labels;
+                chart1.data.datasets = datasets;
+                chart1.update();
             }
             else if (questionId == '2') {
                 const labels = data.map(item => item[0]);
@@ -269,15 +289,15 @@
                     borderWidth: 1
                 }];
 
-                chart.options.scales.y.title.text = 'Days';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Month in 2022';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'What is the average time between a crime and its first arrest if an arrest was made for the year 2022?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = labels;
-                chart.data.datasets = datasets;
-                chart.update();
+                chart1.options.scales.y.title.text = 'Days';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Month in 2022';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'What is the average time between a crime and its first arrest if an arrest was made for the year 2022?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = labels;
+                chart1.data.datasets = datasets;
+                chart1.update();
             }
             else if (questionId == '4') {
                 const labels = data.map(item => item[0]);
@@ -312,15 +332,15 @@
                     }
                 ];
 
-                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Year';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'What is the difference in trends between two crime types versus others within a specific district?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = labels;
-                chart.data.datasets = datasets;
-                chart.update();
+                chart1.options.scales.y.title.text = 'Number of Crime Occurrances';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Year';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'What is the difference in trends between two crime types versus others within a specific district?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = labels;
+                chart1.data.datasets = datasets;
+                chart1.update();
             }
             else if (questionId == '5') {
                 const processedData = data.reduce((acc, [year, district, arrestToCrimeRatio, trustScore]) => {
@@ -367,18 +387,70 @@
                     };
                 });
 
-                chart.options.scales.y.title.text = 'Percentage';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Year';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = processedData.labels;
-                chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
-                chart.update();
+                chart1.options.scales.y.title.text = 'Percentage';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Year';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = processedData.labels;
+                chart1.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
+                chart1.update();
             }
-            else if (questionId == '7') {
-                
+            else if (questionId == '6') {
+                const processedData = data.reduce((acc, [year, crimeType, arrestToCrimeRatio, numberOfVictims]) => {
+                    if (!acc.labels.includes(year)) {
+                        acc.labels.push(year);
+                    }
+
+                    if (!acc.dataByCrimeTypeArrestRatio.hasOwnProperty(crimeType)) {
+                        acc.dataByCrimeTypeArrestRatio[crimeType] = Array(acc.labels.length).fill(null);
+                    }
+
+                    if (!acc.dataByCrimeTypeNumVictims.hasOwnProperty(crimeType)) {
+                        acc.dataByCrimeTypeNumVictims[crimeType] = Array(acc.labels.length).fill(null);
+                    }
+
+                    const index = acc.labels.indexOf(year);
+                    acc.dataByCrimeTypeArrestRatio[crimeType][index] = arrestToCrimeRatio;
+                    acc.dataByCrimeTypeNumVictims[crimeType][index] = numberOfVictims;
+
+                    return acc;
+                }, { labels: [], dataByCrimeTypeArrestRatio: {}, dataByCrimeTypeNumVictims: {} });
+
+                const arrestRatioDatasets = Object.entries(processedData.dataByCrimeTypeArrestRatio).map(([crimeType, dataPoints], index) => {
+                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)'];
+                    return {
+                        label: `${crimeType} Arrest to Crime Ratio`,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+                const numVictimsDatasets = Object.entries(processedData.dataByCrimeTypeNumVictims).map(([crimeType, dataPoints], index) => {
+                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)'];
+                    return {
+                        label: `${crimeType} Number of Victims`,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+                chart1.options.scales.y.title.text = 'Percentage / Number of Victims';
+                chart1.options.scales.y.title.display = true;
+                chart1.options.scales.x.title.text = 'Year';
+                chart1.options.scales.x.title.display = true;
+                chart1.options.plugins.title.text = 'How does the number of victims for certain crime types correlate with the arrest to crime ratio for the same crime types over the years?';
+                chart1.options.plugins.title.display = true;
+                chart1.data.labels = processedData.labels;
+                chart1.data.datasets = [...arrestRatioDatasets, ...numVictimsDatasets];
+                chart1.update();
             }
 
         });
