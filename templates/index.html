@@ -39,13 +39,23 @@
                     <option value="4">Question 4</option>
                 </select>
                 <div id="question4-options" style="display: none;">
-                    <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type</label>
+                    <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type 1</label>
                     <select class="form-select" id="additionalOptions">
-                        <!-- Crime Type options will be dynamically populated -->
+                        <option value="type1">Type 1</option>
+                        <option value="type2">Type 2</option>
+                        <option value="type3">Type 3</option>
                     </select>
-                    <label for="additionalOptions2" class="form-label" id="additionalOptionsLabel2">District</label>
+                    <label for="additionalOptions2" class="form-label" id="additionalOptionsLabel2">Crime Type 2</label>
                     <select class="form-select" id="additionalOptions2">
-                        <!-- District options will be dynamically populated -->
+                        <option value="type1">Type 1</option>
+                        <option value="type2">Type 2</option>
+                        <option value="type3">Type 3</option>
+                    </select>
+                    <label for="additionalOptions3" class="form-label" id="additionalOptionsLabel3">District</label>
+                    <select class="form-select" id="additionalOptions3">
+                        <option value="district1">District 1</option>
+                        <option value="district2">District 2</option>
+                        <option value="district3">District 3</option>
                     </select>
                 </div>
                 <button class="btn btn-primary mt-2" id="submit">Submit</button>
@@ -65,53 +75,29 @@
             data: {}
         });
 
-        document.getElementById('questions').addEventListener('change', async () => {
+        document.getElementById('questions').addEventListener('change', () => {
             const questionId = document.getElementById('questions').value;
-            const additionalOptions = document.getElementById('additionalOptions');
-            const additionalOptionsLabel = document.getElementById('additionalOptionsLabel');
+            const additionalOptions1 = document.getElementById('additionalOptions');
+            const additionalOptionsLabel1 = document.getElementById('additionalOptionsLabel');
+            const additionalOptions2 = document.getElementById('additionalOptions2');
+            const additionalOptionsLabel2 = document.getElementById('additionalOptionsLabel2');
+            const additionalOptions3 = document.getElementById('additionalOptions3');
+            const additionalOptionsLabel3 = document.getElementById('additionalOptionsLabel3');
 
             if (questionId === '4') {
-                additionalOptions.innerHTML = '';
-                const typesResponse = await fetch(`http://${hostname}:${port}/get-types`);
-                const types = await typesResponse.json();
-                const districtsResponse = await fetch(`http://${hostname}:${port}/get-districts`);
-                const districts = await districtsResponse.json();
-
-                const typeOptions = types.map((type) => `<option value="${type}">${type}</option>`);
-                const districtOptions = districts.map((district) => `<option value="${district}">${district}</option>`);
-
-                const typeSelect1 = `
-          <label for="types1" class="form-label">Crime type 1</label>
-          <select class="form-select" id="types1">
-            ${typeOptions.join('')}
-          </select>
-        `;
-
-                const typeSelect2 = `
-          <label for="types2" class="form-label">Crime type 2</label>
-          <select class="form-select" id="types2">
-            ${typeOptions.join('')}
-          </select>
-        `;
-
-                const districtSelect = `
-          <label for="districts" class="form-label">District</label>
-          <select class="form-select" id="districts">
-            ${districtOptions.join('')}
-          </select>
-        `;
-
-                additionalOptions.innerHTML = `
-          ${typeSelect1}
-          ${typeSelect2}
-          ${districtSelect}
-        `;
-
-                additionalOptions.style.display = 'block';
-                additionalOptionsLabel.style.display = 'block';
+                additionalOptions1.style.display = 'block';
+                additionalOptionsLabel1.style.display = 'block';
+                additionalOptions2.style.display = 'block';
+                additionalOptionsLabel2.style.display = 'block';
+                additionalOptions3.style.display = 'block';
+                additionalOptionsLabel3.style.display = 'block';
             } else {
-                additionalOptions.style.display = 'none';
-                additionalOptionsLabel.style.display = 'none';
+                additionalOptions1.style.display = 'none';
+                additionalOptionsLabel1.style.display = 'none';
+                additionalOptions2.style.display = 'none';
+                additionalOptionsLabel2.style.display = 'none';
+                additionalOptions3.style.display = 'none';
+                additionalOptionsLabel3.style.display = 'none';
             }
         });
 
