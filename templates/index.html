@@ -209,6 +209,8 @@
             chart1.options.plugins.title.display = false;
             chart1.update();
 
+            document.getElementById('chart2').style.display = 'none';
+
             chart2.data.labels = [];
             chart2.data.datasets = [];
             chart2.options.scales.y.title.display = false;
@@ -473,6 +475,7 @@
                 chart2.data.labels = processedData.labels;
                 chart2.data.datasets = numVictimsDatasets;
                 chart2.update();
+                document.getElementById('chart2').style.display = 'block';
             }
 
         });
