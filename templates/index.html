@@ -32,19 +32,17 @@
 <body>
     <div class="container">
         <h1>Trends in Crime Data in Chicago</h1>
-        <h2>Trends in Crime Data in Chicago</h2>
         <div class="row">
             <div class="col-md-4">
                 <label for="questions" class="form-label">Select a question</label>
                 <select class="form-select" id="questions">
                     <option value="" selected>Select a question</option>
-                    <option value="" selected>Get Database Count</option>
                     <option value="1">Question 1</option>
                     <option value="2">Question 2</option>
                     <option value="3">Question 3</option>
                     <option value="4">Question 4</option>
                     <option value="5">Question 5</option>
-                    <option value="6">Question 6</option>
+                    <option value="7">Get Database Count</option>
                 </select>
                 <div id="question4-options" style="display: none;">
                     <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type 1</label>
@@ -145,7 +143,6 @@
 
             <div class="col-md-8">
                 <canvas id="chart"></canvas>
-                <canvas id="chart2"></canvas>
             </div>
         </div>
     </div>
@@ -153,7 +150,7 @@
         const hostname = 'localhost';
         const port = 8000;
         const ctx = document.getElementById('chart').getContext('2d');
-        const ctb = document.getElementById('chart2').getContext('2d');
+        var val;
         const chart = new Chart(ctx, {
             type: 'line',
             data: {},
@@ -195,6 +192,7 @@
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}&district=${district}&type1=${type1}&type2=${type2}`);
             const data = await response.json();
 
+            
             if (questionId == '3') {
                 const processedData = data.reduce((acc, [year, crimeType, amount]) => {
                     if (!acc.labels.includes(year)) {
@@ -375,44 +373,8 @@
                 chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
                 chart.update();
             }
-            else if (questionId == '6') {
-                const processedData = data.reduce((acc, [year, crimeType, crimeratio, victims]) => {
-                    if (!acc.labels1.includes(year)) {
-                        acc.labels1.push(year);
-                    }
-
-                    if (!acc.dataByCrimeType.hasOwnProperty(crimeType)) {
-                        acc.dataByCrimeType[crimeType] = Array(acc.labels.length).fill(null);
-                    }
-
-                    const index = acc.labels.indexOf(year);
-                    acc.dataByCrimeType[crimeType][index] = crimeratio;
-
-                    return acc;
-                }, { labels: [], dataByCrimeType: {}});
-
-                const datasets = Object.entries(processedData.dataByCrimeType).map(([crimeType, dataPoints], index) => {
-                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)'];
-                    return {
-                        label: crimeType,
-                        data: dataPoints,
-                        borderColor: colors[index % colors.length],
-                        backgroundColor: colors[index % colors.length],
-                        borderWidth: 1,
-                        fill: false
-                    };
-                });
-
-
-                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
-                chart.options.scales.y.title.display = true;
-                chart.options.scales.x.title.text = 'Year';
-                chart.options.scales.x.title.display = true;
-                chart.options.plugins.title.text = 'What are the top 3 rising types of crime over the last 9 years?';
-                chart.options.plugins.title.display = true;
-                chart.data.labels = processedData.labels;
-                chart.data.datasets = datasets;
-                chart.update();
+            else if (questionId == '7') {
+                
             }
 
         });

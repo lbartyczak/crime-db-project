@@ -131,7 +131,7 @@ async function getData(questionId, district, type1, type2) {
             });
             console.log('connected to db');
 
-            if (questionId == '0') return getCount();
+            if (questionId == '7') return getCount(connection);
             else if (questionId == '1') return query1(connection);
             else if (questionId == '2') return query2(connection);
             else if (questionId == '3') return query3(connection);
@@ -147,22 +147,23 @@ async function getData(questionId, district, type1, type2) {
 }
 
 /* COUNT TUPLES */
-async function getCount() {
+async function getCount(connection) {
+      console.log('getting count...');
       result = await connection.execute(`
-      SELECT a.num + b.num + c.num + d.num
-      FROM (
-            SELECT COUNT(*) num 
-            FROM Cases
-          ) a, (
-            SELECT count(*) num 
-            FROM Arrests 
-          ) b, (
-            SELECT COUNT(*) num
-            FROM Victims
-          ) c, (
-            SELECT COUNT(*) num
-            FROM Sentiments
-          ) d
+            SELECT a.num + b.num + c.num + d.num
+            FROM (
+                  SELECT COUNT(*) num 
+                  FROM Cases
+            ) a, (
+                  SELECT count(*) num 
+                  FROM Arrests 
+            ) b, (
+                  SELECT COUNT(*) num
+                  FROM Victims
+            ) c, (
+                  SELECT COUNT(*) num
+                  FROM Sentiments
+            ) d
       `);
 
       console.log(result);
