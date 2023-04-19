@@ -48,6 +48,52 @@ server.listen(port, hostname, function () {
       console.log(`Server running at http://${hostname}:${port}/`);
 });
 
+async function getTypes() {
+      try {
+            connection = await oracledb.getConnection({
+                  user: 'lauren.bartyczak',
+                  password: password,
+                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
+            });
+            console.log('connected to db');
+
+            result = await connection.execute(`
+                  SELECT DISTINCT crime_type 
+                  FROM Cases
+            `);
+
+            console.log(result);
+            return result.rows;
+
+      } catch (e) {
+            console.error(e.message);
+      }
+}
+
+async function getDistricts() {
+      try {
+            connection = await oracledb.getConnection({
+                  user: 'lauren.bartyczak',
+                  password: password,
+                  connectString: 'oracle.cise.ufl.edu:1521/orcl'
+            });
+            console.log('connected to db');
+
+            result = await connection.execute(`
+                  SELECT DISTINCT location_district 
+                  FROM Cases
+                  WHERE location_district IS NOT NULL
+                  ORDER BY location_district
+            `);
+
+            console.log(result);
+            return result.rows;
+
+      } catch (e) {
+            console.error(e.message);
+      }
+}
+
 async function getData(questionId) {
       let connection;
 
