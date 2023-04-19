@@ -315,7 +315,7 @@ async function query4(connection, district, type1, type2) {
                     where (location_district = :3) and (crime_type = :4) /* allow user to select second crime of choice*/
                     group by crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
                     ) b on a.yr = b.yr
-                    JOIN 
+                    right outer JOIN 
                     (
                     select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, count(*) ccount
                     from Cases
