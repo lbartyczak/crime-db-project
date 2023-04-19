@@ -209,6 +209,13 @@
             chart1.options.plugins.title.display = false;
             chart1.update();
 
+            chart2.data.labels = [];
+            chart2.data.datasets = [];
+            chart2.options.scales.y.title.display = false;
+            chart2.options.scales.x.title.display = false;
+            chart2.options.plugins.title.display = false;
+            chart2.update();
+
             const questionId = document.getElementById('questions').value;
             const district = document.getElementById('additionalOptions3')?.value ?? '';
             const type1 = document.getElementById('additionalOptions')?.value ?? '';
