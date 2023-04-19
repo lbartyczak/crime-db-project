@@ -174,46 +174,46 @@ async function getCount() {
 async function query1(connection) {
       console.log('running query 1...');
       result = await connection.execute(`
-            SELECT timeframe, ROUND(AVG(num),2) avg_hourly_crimerate
+            SELECT timeframe, ROUND(AVG(num), 2) avg_hourly_crimerate
             FROM (
-            SELECT timeframe, COUNT(*) num
-            FROM (
-                  SELECT CASE
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 0 THEN '00:00-00:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 1 THEN '01:00-01:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 2 THEN '02:00-02:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 3 THEN '03:00-03:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 4 THEN '04:00-04:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 5 THEN '05:00-05:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 6 THEN '06:00-06:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 7 THEN '07:00-07:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 8 THEN '08:00-08:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 9 THEN '09:00-09:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 10 THEN '10:00-10:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 11 THEN '11:00-11:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 12 THEN '12:00-12:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 13 THEN '13:00-13:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 14 THEN '14:00-14:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 15 THEN '15:00-15:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 16 THEN '16:00-16:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 17 THEN '17:00-17:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 18 THEN '18:00-18:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 19 THEN '19:00-19:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 20 THEN '20:00-20:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 21 THEN '21:00-21:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 22 THEN '22:00-22:59'
-                        WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 23 THEN '23:00-23:59'
-                        END timeframe,
-                        EXTRACT(DAY FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) day
+                  SELECT timeframe, COUNT(*) num
                   FROM (
-                        SELECT * 
-                        FROM CASES
-                        WHERE EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 03
-                        AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2023
+                        SELECT CASE
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 0 THEN '00:00-00:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 1 THEN '01:00-01:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 2 THEN '02:00-02:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 3 THEN '03:00-03:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 4 THEN '04:00-04:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 5 THEN '05:00-05:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 6 THEN '06:00-06:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 7 THEN '07:00-07:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 8 THEN '08:00-08:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 9 THEN '09:00-09:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 10 THEN '10:00-10:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 11 THEN '11:00-11:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 12 THEN '12:00-12:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 13 THEN '13:00-13:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 14 THEN '14:00-14:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 15 THEN '15:00-15:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 16 THEN '16:00-16:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 17 THEN '17:00-17:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 18 THEN '18:00-18:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 19 THEN '19:00-19:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 20 THEN '20:00-20:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 21 THEN '21:00-21:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 22 THEN '22:00-22:59'
+                              WHEN TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'HH24') = 23 THEN '23:00-23:59'
+                              END timeframe,
+                              EXTRACT(DAY FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) day
+                        FROM (
+                              SELECT * 
+                              FROM CASES
+                              WHERE EXTRACT(MONTH FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 03
+                              AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2023
                         )
                   )
-            WHERE timeframe IS NOT NULL
-            GROUP BY day, timeframe
+                  WHERE timeframe IS NOT NULL
+                  GROUP BY day, timeframe
             )
             GROUP BY timeframe
             ORDER BY timeframe
@@ -240,7 +240,8 @@ async function query2(connection) {
                         FROM Cases
                         WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
                         ) Crimes_2022 
-                        JOIN (
+                        JOIN 
+                        (
                         SELECT casenumber, TO_TIMESTAMP(MIN(TO_TIMESTAMP(dateofarrest, 'MM/DD/YYYY HH:MI:SS AM'))) firstarrestdate
                         FROM Arrests
                         WHERE casenumber IS NOT NULL
@@ -261,31 +262,30 @@ async function query2(connection) {
 async function query3(connection) {
       console.log('running query 3...');
       result = await connection.execute(`
-            SELECT EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) year, Cases.crime_type, count(*)
-            FROM (
-                SELECT * 
-                FROM (
-                    SELECT crimes_2014.crime_type, crimes_2022.counts - crimes_2014.counts diff
-                    FROM (
-                        SELECT crime_type, COUNT(*) counts
-                        FROM Cases
-                        WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2014
-                        GROUP BY crime_type
-                        ) crimes_2014, (
-                        SELECT crime_type, COUNT(*) counts
-                        FROM Cases 
-                        WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
-                        GROUP BY crime_type
-                        ) crimes_2022
-                    WHERE crimes_2014.crime_type = crimes_2022.crime_type
-                    ORDER BY diff DESC
-                    )
-                WHERE ROWNUM <= 3
-                ) rising_crimes 
-                JOIN 
-                Cases ON rising_crimes.crime_type = Cases.crime_type
+            SELECT EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) year, crime_type, count(*)
+            FROM Cases 
             WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) < 2023
-            GROUP BY EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), Cases.crime_type
+            AND crime_type IN (
+                  SELECT crime_type 
+                  FROM (
+                        SELECT crimes_2014.crime_type, crimes_2022.counts - crimes_2014.counts diff
+                        FROM (
+                              SELECT crime_type, COUNT(*) counts
+                              FROM Cases
+                              WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2014
+                              GROUP BY crime_type
+                        ) crimes_2014, (
+                              SELECT crime_type, COUNT(*) counts
+                              FROM Cases 
+                              WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
+                              GROUP BY crime_type
+                        ) crimes_2022
+                        WHERE crimes_2014.crime_type = crimes_2022.crime_type
+                        ORDER BY diff DESC
+                  )
+                  WHERE ROWNUM <= 3
+            )
+            GROUP BY EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), crime_type
             ORDER BY year, crime_type
       `);
 
@@ -315,7 +315,7 @@ async function query4(connection, district, type1, type2) {
                     where (location_district = :3) and (crime_type = :4) /* allow user to select second crime of choice*/
                     group by crime_type, EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
                     ) b on a.yr = b.yr
-                    right outer JOIN 
+                    JOIN 
                     (
                     select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, count(*) ccount
                     from Cases
@@ -328,7 +328,7 @@ async function query4(connection, district, type1, type2) {
                     group by EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'))
                     ) c on a.yr = c.yr
             ORDER BY a.yr ASC
-            `, data);
+      `, data);
 
       console.log(result);
       return result.rows;
@@ -389,7 +389,7 @@ async function query6(connection) {
       console.log('running query 6...');
       result = await connection.execute(`
       SELECT crimes.quarter, crimes.crime_type, ROUND(
-            Count(case when crimes.crime_arrest like 'True' then 1 end)/count(*), 3) ArrestsRatio, victs.num_victims
+            Count(case when crimes.crime_arrest like 'True' then 1 end)/count(*), 3) * 100 ArrestsRatio, victs.num_victims
         FROM (
             SELECT TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'YYYY Q') quarter, 
                 casenumber, crime_arrest, crime_type

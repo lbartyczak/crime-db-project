@@ -38,6 +38,7 @@
                     <option value="3">Question 3</option>
                     <option value="4">Question 4</option>
                     <option value="5">Question 5</option>
+                    <option value="6">Question 6</option>
                 </select>
                 <div id="question4-options" style="display: none;">
                     <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type 1</label>
@@ -54,7 +55,7 @@
                         <option value="WEAPONS VIOLATION">Weapons Violation</option>
                         <option value="CRIMINAL TRESSPASS">Criminal Tresspass</option>
                         <option value="OFFENSE INVOLVING CHILDREN">Offense Involving Children</option>
-                        <option value="PUBLIC PEACE OFFENSE">Public Peace Offense</option>
+                        <option value="PUBLIC PEACE VIOLATION">Public Peace Violation</option>
                         <option value="SEX OFFENSE">Sex Offense</option>
                         <option value="INTERFERENCE WITH PUBLIC OFFICER">Interference with Public Officer</option>
                         <option value="CRIM SEXUAL ASSAULT">Criminal Sexual Assault</option>
@@ -87,7 +88,7 @@
                         <option value="WEAPONS VIOLATION">Weapons Violation</option>
                         <option value="CRIMINAL TRESPASS">Criminal Trespass</option>
                         <option value="OFFENSE INVOLVING CHILDREN">Offense Involving Children</option>
-                        <option value="PUBLIC PEACE OFFENSE">Public Peace Offense</option>
+                        <option value="PUBLIC PEACE VIOLATION">Public Peace Violation</option>
                         <option value="SEX OFFENSE">Sex Offense</option>
                         <option value="INTERFERENCE WITH PUBLIC OFFICER">Interference with Public Officer</option>
                         <option value="CRIM SEXUAL ASSAULT">Criminal Sexual Assault</option>
@@ -138,6 +139,7 @@
 
             <div class="col-md-8">
                 <canvas id="chart"></canvas>
+                <canvas id="chart2"></canvas>
             </div>
         </div>
     </div>
@@ -145,6 +147,7 @@
         const hostname = 'localhost';
         const port = 8000;
         const ctx = document.getElementById('chart').getContext('2d');
+        const ctb = document.getElementById('chart2').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
             data: {},
@@ -364,6 +367,45 @@
                 chart.options.plugins.title.display = true;
                 chart.data.labels = processedData.labels;
                 chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
+                chart.update();
+            }
+            else if (questionId == '6') {
+                const processedData = data.reduce((acc, [year, crimeType, crimeratio, victims]) => {
+                    if (!acc.labels1.includes(year)) {
+                        acc.labels1.push(year);
+                    }
+
+                    if (!acc.dataByCrimeType.hasOwnProperty(crimeType)) {
+                        acc.dataByCrimeType[crimeType] = Array(acc.labels.length).fill(null);
+                    }
+
+                    const index = acc.labels.indexOf(year);
+                    acc.dataByCrimeType[crimeType][index] = crimeratio;
+
+                    return acc;
+                }, { labels: [], dataByCrimeType: {}});
+
+                const datasets = Object.entries(processedData.dataByCrimeType).map(([crimeType, dataPoints], index) => {
+                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)', 'rgba(255, 206, 86, 1)'];
+                    return {
+                        label: crimeType,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+
+                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Year';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'What are the top 3 rising types of crime over the last 9 years?';
+                chart.options.plugins.title.display = true;
+                chart.data.labels = processedData.labels;
+                chart.data.datasets = datasets;
                 chart.update();
             }
 
