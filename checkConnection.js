@@ -131,7 +131,7 @@ async function getData(questionId, district, type1, type2) {
             });
             console.log('connected to db');
 
-            if (questionId == '0') return getCount();
+            if (questionId == '7') return getCount();
             else if (questionId == '1') return query1(connection);
             else if (questionId == '2') return query2(connection);
             else if (questionId == '3') return query3(connection);
