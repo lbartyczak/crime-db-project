@@ -106,12 +106,13 @@ async function getData(questionId) {
             console.log('connected to db');
 
             if (questionId == '0') return getCount();
-            else if (questionId == '1')  return query1();
-            else if (questionId == '2') return query2();
-            else if (questionId == '3') return query3();
-            else if (questionId == '4') return query4();
-            else if (questionId == '5') return query5();
-            else if (questionId == '6') return query6();
+            else if (questionId == '1')  return query1(connection);
+            else if (questionId == '2') return query2(connection);
+            else if (questionId == '3') return query3(connection);
+            else if (questionId == '4') return query4(connection);
+            else if (questionId == '5') return query5(connection);
+            else if (questionId == '6') return query6(connection);
+            else counsole.log('not entered properly');
 
       } catch (e) {
             console.error(e.message);
@@ -144,7 +145,8 @@ async function getCount() {
 
 /* QUERY 1*/
 /* What is the average crime ocurrance across the hours of the day for the month of March, 2023? */
-async function query1() {
+async function query1(connection) {
+      console.log('running query 1...');
       result = await connection.execute(`
             SELECT timeframe, ROUND(AVG(num),2) avg_hourly_crimerate
             FROM (
@@ -197,7 +199,8 @@ async function query1() {
 
 /* QUERY 2*/
 /* What is the average time (in days) between a crime and its first arrest if an arrest was made for the year 2022 */
-async function query2() {
+async function query2(connection) {
+      console.log('running query 2...');
       result = await connection.execute(`
             SELECT month, ROUND(AVG(
                   EXTRACT(MINUTE FROM timediff) +
@@ -229,7 +232,8 @@ async function query2() {
 
 /* QUERY 3 */
 /* What are the top 3 rising types of crime over the last 9 years? */
-async function query3() {
+async function query3(connection) {
+      console.log('running query 3...');
       result = await connection.execute(`
             SELECT EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) year, Cases.crime_type, count(*)
             FROM (
@@ -265,7 +269,8 @@ async function query3() {
 /* QUERY 4 */
 /* What is the difference in trends between two crime types (that the user selects) versus 
 others within a specific district?*/
-async function query4() {
+async function query4(connection) {
+      console.log('running query 4...');
       data = [4, 'THEFT', 4, 'ASSAULT', 4, 'THEFT', 'ASSAULT'];
       result = await connection.execute(`
             SELECT a.yr, acount as type1, bcount as type2, ccount as "Others"
@@ -302,29 +307,46 @@ async function query4() {
 }
 
 /* QUERY 5 */
-/* Does the ratio of no arrests in comparison to crimes each year affect how much Area 5 residents trust in the police? */
-async function query5() {
+/* Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police? */
+async function query5(connection) {
+      console.log('running query 5...');
       result = await connection.execute(`
-            SELECT Scores.year, CrimeRatios.district, ROUND(CrimeArrestRatio, 3) as "No Arrests Made/Total Crimes", ROUND(Scores.trust_scores, 3) as "Avg Trust Scores"
+            SELECT Scores.year, CrimeRatios.district, ROUND(CrimeArrestRatio, 3) * 100 as "No Arrests Made/Total Crimes", ROUND(Scores.trust_scores, 3) as "Avg Trust Scores"
             FROM (
                   select district
                   from Sentiments
-                  where area = 'area_5'
-                  group by district
-            ) DistrictArea
-            JOIN 
-            (
-                  select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, location_district district, COUNT(case when crime_arrest like 'False' then 1 end)/COUNT(*) as CrimeArrestRatio /*no arrests made/ number of crimes*/
-                  from Cases
-                  group by EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), location_district
-                  
-            ) CrimeRatios on CrimeRatios.district = DistrictArea.district
-            JOIN 
-            (
-                  select EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')) as year, district,avg(trust) as trust_scores
-                  from Sentiments
-                  group by EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')), district
-            ) Scores on CrimeRatios.yr = Scores.year and CrimeRatios.district = Scores.district
+                  where district IN (
+                        SELECT district
+                        FROM (
+                              SELECT district, AVG(trust) avg_trust
+                              FROM Sentiments 
+                              GROUP BY district
+                        )
+                        WHERE avg_trust = (
+                              SELECT MIN(AVG(trust))
+                              FROM Sentiments
+                              GROUP BY district
+                        )
+                        OR avg_trust = (
+                              SELECT MAX(AVG(trust))
+                              FROM Sentiments
+                              GROUP BY district
+                        )       
+                  )
+                  GROUP BY district
+                  ) DistrictArea
+                  JOIN 
+                  (
+                        select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, location_district district, COUNT(case when crime_arrest like 'False' then 1 end)/COUNT(*) as CrimeArrestRatio /*no arrests made/ number of crimes*/
+                        from Cases
+                        group by EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), location_district
+                  ) CrimeRatios on CrimeRatios.district = DistrictArea.district
+                  JOIN 
+                  (
+                        select EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')) as year, district,avg(trust) as trust_scores
+                        from Sentiments
+                        group by EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')), district
+                  ) Scores on CrimeRatios.yr = Scores.year and CrimeRatios.district = Scores.district
             ORDER BY Scores.year, CrimeRatios.district ASC
       `);
 
@@ -335,7 +357,8 @@ async function query5() {
 /* QUERY 6 */
 /* Of the violent crimes with arrest-to-occurance rates of less than 25% in 2022,
 how has that ratio, and the number of victims of those crimes, changed over the last 5 years? */
-async function query6() {
+async function query6(connection) {
+      console.log('running query 6...');
       result = await connection.execute(`
       SELECT crimes.quarter, crimes.crime_type, ROUND(
             Count(case when crimes.crime_arrest like 'True' then 1 end)/count(*), 3) ArrestsRatio, victs.num_victims
