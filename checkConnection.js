@@ -284,6 +284,7 @@ async function query3(connection) {
                 ) rising_crimes 
                 JOIN 
                 Cases ON rising_crimes.crime_type = Cases.crime_type
+            WHERE EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) < 2023
             GROUP BY EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), Cases.crime_type
             ORDER BY year, crime_type
       `);
