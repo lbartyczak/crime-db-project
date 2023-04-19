@@ -36,6 +36,8 @@
                     <option value="1">Question 1</option>
                     <option value="2">Question 2</option>
                     <option value="3">Question 3</option>
+                    <option value="4">Question 4</option>
+
                 </select>
                 <label for="additionalOptions" class="form-label" id="additionalOptionsLabel"
                     style="display: none;">Additional options</label>
@@ -66,7 +68,7 @@
             const additionalOptions = document.getElementById('additionalOptions');
             const additionalOptionsLabel = document.getElementById('additionalOptionsLabel');
 
-            if (questionId === '1') {
+            if (questionId === '4') {
                 additionalOptions.style.display = 'block';
                 additionalOptionsLabel.style.display = 'block';
             } else {
@@ -79,7 +81,7 @@
             chart.data.labels = [];
             chart.data.datasets = [];
             chart.update();
-            
+
             const questionId = document.getElementById('questions').value;
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}`);
             const data = await response.json();
@@ -116,12 +118,29 @@
                 chart.data.datasets = datasets;
                 chart.update();
             }
-            else if (questionId == '2') {
+            else if (questionId == '1') {
                 const labels = data.map(item => item[0]);
                 const dataPoints = data.map(item => item[1]);
 
                 const datasets = [{
                     label: 'Index',
+                    data: dataPoints,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }];
+
+                chart.data.labels = labels;
+                chart.data.datasets = datasets;
+                chart.update();
+            }
+            else if (questionId == '2')
+            {
+                const labels = data.map(item => item[0]);
+                const dataPoints = data.map(item => item[1]);
+
+                const datasets = [{
+                    label: 'Average Days',
                     data: dataPoints,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
