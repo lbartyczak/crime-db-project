@@ -299,6 +299,7 @@ others within a specific district?*/
 async function query4(connection, district, type1, type2) {
       console.log('running query 4...');
       data = [district, type1, district, type2, district, type1, type2];
+      console.log(data);
       result = await connection.execute(`
             SELECT a.yr, acount as type1, bcount as type2, ccount as "Others"
             FROM (

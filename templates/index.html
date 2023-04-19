@@ -166,9 +166,9 @@
             chart.update();
 
             const questionId = document.getElementById('questions').value;
-            const district = document.getElementById('districts')?.value ?? '';
-            const type1 = document.getElementById('type1')?.value ?? '';
-            const type2 = document.getElementById('type2')?.value ?? '';
+            const district = document.getElementById('additionalOptions3')?.value ?? '';
+            const type1 = document.getElementById('additionalOptions')?.value ?? '';
+            const type2 = document.getElementById('additionalOptions2')?.value ?? '';
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}&district=${district}&type1=${type1}&type2=${type2}`);
             const data = await response.json();
 
