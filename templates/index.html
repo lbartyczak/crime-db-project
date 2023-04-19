@@ -41,11 +41,15 @@
                     <option value="" selected>Select a question</option>
                     <option value="6">Question 6</option>
                     <option value="7">Get Database Count</option>
-                    <option value="1">What is the average crime ocurrance across the hours of the day for the month of March, 2023?</option>
-                    <option value="2">What is the average time between a crime and its first arrest if an arrest was made for the year 2022?</option>
+                    <option value="1">What is the average crime ocurrance across the hours of the day for the month of
+                        March, 2023?</option>
+                    <option value="2">What is the average time between a crime and its first arrest if an arrest was
+                        made for the year 2022?</option>
                     <option value="3">What are the top 3 rising types of crime over the last 9 years?</option>
-                    <option value="4">What is the difference in trends between two crime types versus others within a specific district?</option>
-                    <option value="5">Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police?</option>
+                    <option value="4">What is the difference in trends between two crime types versus others within a
+                        specific district?</option>
+                    <option value="5">Does the ratio of no arrests in comparison to crimes each year affect how much
+                        districts with the highest and lowest average trust ratings trust the police?</option>
                 </select>
                 <div id="question4-options" style="display: none;">
                     <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type 1</label>
@@ -442,15 +446,26 @@
                     };
                 });
 
-                chart1.options.scales.y.title.text = 'Percentage / Number of Victims';
+                // Update chart1 for Arrest to Crime Ratio
+                chart1.options.scales.y.title.text = 'Percentage';
                 chart1.options.scales.y.title.display = true;
                 chart1.options.scales.x.title.text = 'Year';
                 chart1.options.scales.x.title.display = true;
-                chart1.options.plugins.title.text = 'How does the number of victims for certain crime types correlate with the arrest to crime ratio for the same crime types over the years?';
+                chart1.options.plugins.title.text = 'How does the arrest to crime ratio for certain crime types change over the years?';
                 chart1.options.plugins.title.display = true;
                 chart1.data.labels = processedData.labels;
-                chart1.data.datasets = [...arrestRatioDatasets, ...numVictimsDatasets];
+                chart1.data.datasets = arrestRatioDatasets;
                 chart1.update();
+
+                chart2.options.scales.y.title.text = 'Number of Victims';
+                chart2.options.scales.y.title.display = true;
+                chart2.options.scales.x.title.text = 'Year';
+                chart2.options.scales.x.title.display = true;
+                chart2.options.plugins.title.text = 'How does the number of victims for certain crime types change over the years?';
+                chart2.options.plugins.title.display = true;
+                chart2.data.labels = processedData.labels;
+                chart2.data.datasets = numVictims;
+                chart2.update();
             }
 
         });
