@@ -37,23 +37,26 @@
                     <option value="2">Question 2</option>
                     <option value="3">Question 3</option>
                     <option value="4">Question 4</option>
-
                 </select>
-                <label for="additionalOptions" class="form-label" id="additionalOptionsLabel"
-                    style="display: none;">Additional options</label>
-                <select class="form-select" id="additionalOptions" style="display: none;">
-                    <option value="1">Option 1</option>
-                    <option value="2">Option 2</option>
-                    <option value="3">Option 3</option>
-                </select>
+                <div id="question4-options" style="display: none;">
+                    <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type</label>
+                    <select class="form-select" id="additionalOptions">
+                        <!-- Crime Type options will be dynamically populated -->
+                    </select>
+                    <label for="additionalOptions2" class="form-label" id="additionalOptionsLabel2">District</label>
+                    <select class="form-select" id="additionalOptions2">
+                        <!-- District options will be dynamically populated -->
+                    </select>
+                </div>
                 <button class="btn btn-primary mt-2" id="submit">Submit</button>
             </div>
+
             <div class="col-md-8">
                 <canvas id="chart"></canvas>
             </div>
         </div>
     </div>
-
+    <script src="checkConnection.js"></script>
     <script>
         const hostname = 'localhost';
         const port = 8000;
@@ -63,12 +66,46 @@
             data: {}
         });
 
-        document.getElementById('questions').addEventListener('change', () => {
+        document.getElementById('questions').addEventListener('change', async () => {
             const questionId = document.getElementById('questions').value;
             const additionalOptions = document.getElementById('additionalOptions');
             const additionalOptionsLabel = document.getElementById('additionalOptionsLabel');
 
             if (questionId === '4') {
+                additionalOptions.innerHTML = '';
+                const types = await getTypes();
+                const districts = await getDistricts();
+
+                const typeOptions = types.map((type) => `<option value="${type}">${type}</option>`);
+                const districtOptions = districts.map((district) => `<option value="${district}">${district}</option>`);
+
+                const typeSelect1 = `
+          <label for="types1" class="form-label">Crime type 1</label>
+          <select class="form-select" id="types1">
+            ${typeOptions.join('')}
+          </select>
+        `;
+
+                const typeSelect2 = `
+          <label for="types2" class="form-label">Crime type 2</label>
+          <select class="form-select" id="types2">
+            ${typeOptions.join('')}
+          </select>
+        `;
+
+                const districtSelect = `
+          <label for="districts" class="form-label">District</label>
+          <select class="form-select" id="districts">
+            ${districtOptions.join('')}
+          </select>
+        `;
+
+                additionalOptions.innerHTML = `
+          ${typeSelect1}
+          ${typeSelect2}
+          ${districtSelect}
+        `;
+
                 additionalOptions.style.display = 'block';
                 additionalOptionsLabel.style.display = 'block';
             } else {
@@ -134,8 +171,7 @@
                 chart.data.datasets = datasets;
                 chart.update();
             }
-            else if (questionId == '2')
-            {
+            else if (questionId == '2') {
                 const labels = data.map(item => item[0]);
                 const dataPoints = data.map(item => item[1]);
 
@@ -150,6 +186,9 @@
                 chart.data.labels = labels;
                 chart.data.datasets = datasets;
                 chart.update();
+            }
+            else if (questionId == '4') {
+
             }
 
         });
