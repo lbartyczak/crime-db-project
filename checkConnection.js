@@ -94,8 +94,8 @@ async function getDistricts() {
       }
 }
 
-window.getTypes = getTypes;
-window.getDistricts = getDistricts;
+global.getTypes = getTypes;
+global.getDistricts = getDistricts;
 
 async function getData(questionId) {
       let connection;
