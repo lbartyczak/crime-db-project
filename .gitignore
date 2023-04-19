@@ -1,20 +1,11 @@
 #datasets
-Arrests.csv
-Chicago_Population_Counts.csv
-Crimes_-_2001_to_Present.csv
-Police_Sentiment_Scores.csv
-Police_Stations.csv
-Violence_REduction_-_Victim_Demographics_-_Aggregated.csv
+datasets/
 
 #altered datasets
-arrestts.csv
-crime.csv
-sentiment.csv
-stations.csv
-victims.csv
+cleaned_datasets/
 
 #unused dataset alterers
-stations.py
+cleaning_scripts/stations.py
 
 #other files
 testotpt.js
