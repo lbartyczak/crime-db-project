@@ -6,14 +6,37 @@ const hostname = 'localhost';
 const port = 8000;
 
 var password;
-fs.readFile('password.txt', 'utf8', function(err, data) {
+fs.readFile('password.txt', 'utf8', function (err, data) {
       if (err) throw err;
       password = data;
-    });
+});
 
 const server = http.createServer(async function (req, res) {
       const requestUrl = url.parse(req.url, true);
-      if (requestUrl.pathname.startsWith('/get-data')) {
+      if (requestUrl.pathname.startsWith('/get-types')) {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+
+            try {
+                  const data = await getTypes();
+                  res.end(JSON.stringify(data));
+            } catch (e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
+            }
+      } else if (requestUrl.pathname.startsWith('/get-districts')) {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+
+            try {
+                  const data = await getDistricts();
+                  res.end(JSON.stringify(data));
+            } catch (e) {
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ error: e.message }));
+            }
+      }
+      else if (requestUrl.pathname.startsWith('/get-data')) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
             const questionId = requestUrl.query.questionId;
@@ -94,9 +117,6 @@ async function getDistricts() {
       }
 }
 
-global.getTypes = getTypes;
-global.getDistricts = getDistricts;
-
 async function getData(questionId) {
       let connection;
 
@@ -109,7 +129,7 @@ async function getData(questionId) {
             console.log('connected to db');
 
             if (questionId == '0') return getCount();
-            else if (questionId == '1')  return query1(connection);
+            else if (questionId == '1') return query1(connection);
             else if (questionId == '2') return query2(connection);
             else if (questionId == '3') return query3(connection);
             else if (questionId == '4') return query4(connection);
@@ -230,7 +250,7 @@ async function query2(connection) {
 
       console.log(result);
       return result.rows;
- 
+
 }
 
 /* QUERY 3 */

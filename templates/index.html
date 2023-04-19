@@ -73,8 +73,10 @@
 
             if (questionId === '4') {
                 additionalOptions.innerHTML = '';
-                const types = await getTypes();
-                const districts = await getDistricts();
+                const typesResponse = await fetch(`http://${hostname}:${port}/get-types`);
+                const types = await typesResponse.json();
+                const districtsResponse = await fetch(`http://${hostname}:${port}/get-districts`);
+                const districts = await districtsResponse.json();
 
                 const typeOptions = types.map((type) => `<option value="${type}">${type}</option>`);
                 const districtOptions = districts.map((district) => `<option value="${district}">${district}</option>`);
