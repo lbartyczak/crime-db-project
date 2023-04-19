@@ -273,6 +273,55 @@
                 chart.data.datasets = datasets;
                 chart.update();
             }
+            else if (questionId == '5') {
+                const processedData = data.reduce((acc, [year, district, arrestToCrimeRatio, trustScore]) => {
+                    if (!acc.labels.includes(year)) {
+                        acc.labels.push(year);
+                    }
+
+                    if (!acc.dataByDistrictArrestRatio.hasOwnProperty(district)) {
+                        acc.dataByDistrictArrestRatio[district] = Array(acc.labels.length).fill(null);
+                    }
+
+                    if (!acc.dataByDistrictTrustScore.hasOwnProperty(district)) {
+                        acc.dataByDistrictTrustScore[district] = Array(acc.labels.length).fill(null);
+                    }
+
+                    const index = acc.labels.indexOf(year);
+                    acc.dataByDistrictArrestRatio[district][index] = arrestToCrimeRatio;
+                    acc.dataByDistrictTrustScore[district][index] = trustScore;
+
+                    return acc;
+                }, { labels: [], dataByDistrictArrestRatio: {}, dataByDistrictTrustScore: {} });
+
+                const arrestRatioDatasets = Object.entries(processedData.dataByDistrictArrestRatio).map(([district, dataPoints], index) => {
+                    const colors = ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'];
+                    return {
+                        label: `${district} Arrest to Crime Ratio`,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+                const trustScoreDatasets = Object.entries(processedData.dataByDistrictTrustScore).map(([district, dataPoints], index) => {
+                    const colors = ['rgba(255, 206, 86, 1)', 'rgba(153, 102, 255, 1)'];
+                    return {
+                        label: `${district} Trust Score`,
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        backgroundColor: colors[index % colors.length],
+                        borderWidth: 1,
+                        fill: false
+                    };
+                });
+
+                chart.data.labels = processedData.labels;
+                chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
+                chart.update();
+            }
 
         });
     </script>
