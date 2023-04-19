@@ -147,7 +147,17 @@
         const ctx = document.getElementById('chart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
-            data: {}
+            data: {},
+            options: {
+                scales: {
+                    y: {
+                        title: {}
+                    },
+                    x: {
+                        title: {}
+                    }
+                }
+            }
         });
 
         document.getElementById('questions').addEventListener('change', () => {
@@ -164,6 +174,9 @@
         document.getElementById('submit').addEventListener('click', async () => {
             chart.data.labels = [];
             chart.data.datasets = [];
+            chart.options.scales.y.title.display = false;
+            chart.options.scales.x.title.display = false;
+            chart.options.plugins.title.display = false;
             chart.update();
 
             const questionId = document.getElementById('questions').value;
@@ -201,6 +214,12 @@
                     };
                 });
 
+                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Year';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'What are the top 3 rising types of crime over the last 9 years?';
+                chart.options.plugins.title.display = true;
                 chart.data.labels = processedData.labels;
                 chart.data.datasets = datasets;
                 chart.update();
@@ -217,6 +236,12 @@
                     borderWidth: 1
                 }];
 
+                chart.options.scales.y.title.text = 'Average Crime Rate';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Timeframe';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'What is the average crime ocurrance across the hours of the day for the month of March, 2023?';
+                chart.options.plugins.title.display = true;
                 chart.data.labels = labels;
                 chart.data.datasets = datasets;
                 chart.update();
@@ -233,6 +258,12 @@
                     borderWidth: 1
                 }];
 
+                chart.options.scales.y.title.text = 'Days';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Month in 2022';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'What is the average time between a crime and its first arrest if an arrest was made for the year 2022?';
+                chart.options.plugins.title.display = true;
                 chart.data.labels = labels;
                 chart.data.datasets = datasets;
                 chart.update();
@@ -270,6 +301,12 @@
                     }
                 ];
 
+                chart.options.scales.y.title.text = 'Number of Crime Occurrances';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Year';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'What is the difference in trends between two crime types versus others within a specific district?';
+                chart.options.plugins.title.display = true;
                 chart.data.labels = labels;
                 chart.data.datasets = datasets;
                 chart.update();
@@ -319,6 +356,12 @@
                     };
                 });
 
+                chart.options.scales.y.title.text = 'Percentage';
+                chart.options.scales.y.title.display = true;
+                chart.options.scales.x.title.text = 'Year';
+                chart.options.scales.x.title.display = true;
+                chart.options.plugins.title.text = 'Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police?';
+                chart.options.plugins.title.display = true;
                 chart.data.labels = processedData.labels;
                 chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
                 chart.update();
