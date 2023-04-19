@@ -40,9 +40,12 @@ const server = http.createServer(async function (req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.setHeader('Access-Control-Allow-Origin', '*');
             const questionId = requestUrl.query.questionId;
+            const district = requestUrl.query.district;
+            const type1 = requestUrl.query.type1;
+            const type2 = requestUrl.query.type2;
 
             try {
-                  const data = await getData(questionId);
+                  const data = await getData(questionId, district, type1, type2);
                   res.end(JSON.stringify(data));
             } catch (e) {
                   res.statusCode = 500;
@@ -117,7 +120,7 @@ async function getDistricts() {
       }
 }
 
-async function getData(questionId) {
+async function getData(questionId, district, type1, type2) {
       let connection;
 
       try {
@@ -132,7 +135,7 @@ async function getData(questionId) {
             else if (questionId == '1') return query1(connection);
             else if (questionId == '2') return query2(connection);
             else if (questionId == '3') return query3(connection);
-            else if (questionId == '4') return query4(connection);
+            else if (questionId == '4') return query4(connection, district, type1, type2);
             else if (questionId == '5') return query5(connection);
             else if (questionId == '6') return query6(connection);
             else counsole.log('not entered properly');
@@ -292,9 +295,9 @@ async function query3(connection) {
 /* QUERY 4 */
 /* What is the difference in trends between two crime types (that the user selects) versus 
 others within a specific district?*/
-async function query4(connection) {
+async function query4(connection, district, type1, type2) {
       console.log('running query 4...');
-      data = [4, 'THEFT', 4, 'ASSAULT', 4, 'THEFT', 'ASSAULT'];
+      data = [district, type1, district, type2, district, type1, type2];
       result = await connection.execute(`
             SELECT a.yr, acount as type1, bcount as type2, ccount as "Others"
             FROM (
