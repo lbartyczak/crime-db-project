@@ -31,19 +31,18 @@
 
 <body>
     <div class="container">
-        <h1>Trends in Crime Data in Chicago</h1>
-        <h2>Trends in Crime Data in Chicago</h2>
+        <h1>Welcome to the Chicago Crime Database!</h1>
         <div class="row">
             <div class="col-md-4">
                 <label for="questions" class="form-label">Select a question</label>
                 <select class="form-select" id="questions">
                     <option value="" selected>Select a question</option>
-                    <option value="1">Question 1</option>
-                    <option value="2">Question 2</option>
-                    <option value="3">Question 3</option>
-                    <option value="4">Question 4</option>
-                    <option value="5">Question 5</option>
                     <option value="7">Get Database Count</option>
+                    <option value="1">What is the average crime ocurrance across the hours of the day for the month of March, 2023?</option>
+                    <option value="2">What is the average time between a crime and its first arrest if an arrest was made for the year 2022?</option>
+                    <option value="3">What are the top 3 rising types of crime over the last 9 years?</option>
+                    <option value="4">What is the difference in trends between two crime types versus others within a specific district?</option>
+                    <option value="5">Does the ratio of no arrests in comparison to crimes each year affect how much districts with the highest and lowest average trust ratings trust the police?</option>
                 </select>
                 <div id="question4-options" style="display: none;">
                     <label for="additionalOptions" class="form-label" id="additionalOptionsLabel">Crime Type 1</label>
@@ -60,7 +59,7 @@
                         <option value="WEAPONS VIOLATION">Weapons Violation</option>
                         <option value="CRIMINAL TRESSPASS">Criminal Tresspass</option>
                         <option value="OFFENSE INVOLVING CHILDREN">Offense Involving Children</option>
-                        <option value="PUBLIC PEACE VIOLATION">Public Peace Violation</option>
+                        <option value="PUBLIC PEACE OFFENSE">Public Peace Offense</option>
                         <option value="SEX OFFENSE">Sex Offense</option>
                         <option value="INTERFERENCE WITH PUBLIC OFFICER">Interference with Public Officer</option>
                         <option value="CRIM SEXUAL ASSAULT">Criminal Sexual Assault</option>
@@ -93,7 +92,7 @@
                         <option value="WEAPONS VIOLATION">Weapons Violation</option>
                         <option value="CRIMINAL TRESPASS">Criminal Trespass</option>
                         <option value="OFFENSE INVOLVING CHILDREN">Offense Involving Children</option>
-                        <option value="PUBLIC PEACE VIOLATION">Public Peace Violation</option>
+                        <option value="PUBLIC PEACE OFFENSE">Public Peace Offense</option>
                         <option value="SEX OFFENSE">Sex Offense</option>
                         <option value="INTERFERENCE WITH PUBLIC OFFICER">Interference with Public Officer</option>
                         <option value="CRIM SEXUAL ASSAULT">Criminal Sexual Assault</option>
@@ -151,7 +150,6 @@
         const hostname = 'localhost';
         const port = 8000;
         const ctx = document.getElementById('chart').getContext('2d');
-        var val;
         const chart = new Chart(ctx, {
             type: 'line',
             data: {},
@@ -193,7 +191,8 @@
             const response = await fetch(`http://${hostname}:${port}/get-data?questionId=${questionId}&district=${district}&type1=${type1}&type2=${type2}`);
             const data = await response.json();
 
-            
+            console.log(data);
+
             if (questionId == '3') {
                 const processedData = data.reduce((acc, [year, crimeType, amount]) => {
                     if (!acc.labels.includes(year)) {
@@ -233,7 +232,7 @@
                 chart.update();
             }
             else if (questionId == '7') {
-                
+                window.alert("Tuples: " + data);
             }
             else if (questionId == '1') {
                 const labels = data.map(item => item[0]);
@@ -376,9 +375,6 @@
                 chart.data.labels = processedData.labels;
                 chart.data.datasets = [...arrestRatioDatasets, ...trustScoreDatasets];
                 chart.update();
-            }
-            else if (questionId == '7') {
-                
             }
 
         });
