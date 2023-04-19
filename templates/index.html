@@ -77,27 +77,12 @@
 
         document.getElementById('questions').addEventListener('change', () => {
             const questionId = document.getElementById('questions').value;
-            const additionalOptions1 = document.getElementById('additionalOptions');
-            const additionalOptionsLabel1 = document.getElementById('additionalOptionsLabel');
-            const additionalOptions2 = document.getElementById('additionalOptions2');
-            const additionalOptionsLabel2 = document.getElementById('additionalOptionsLabel2');
-            const additionalOptions3 = document.getElementById('additionalOptions3');
-            const additionalOptionsLabel3 = document.getElementById('additionalOptionsLabel3');
+            const question4Options = document.getElementById('question4-options');
 
-            if (questionId == '4') {
-                additionalOptions1.style.display = 'block';
-                additionalOptionsLabel1.style.display = 'block';
-                additionalOptions2.style.display = 'block';
-                additionalOptionsLabel2.style.display = 'block';
-                additionalOptions3.style.display = 'block';
-                additionalOptionsLabel3.style.display = 'block';
+            if (questionId === '4') {
+                question4Options.style.display = 'block';
             } else {
-                additionalOptions1.style.display = 'none';
-                additionalOptionsLabel1.style.display = 'none';
-                additionalOptions2.style.display = 'none';
-                additionalOptionsLabel2.style.display = 'none';
-                additionalOptions3.style.display = 'none';
-                additionalOptionsLabel3.style.display = 'none';
+                question4Options.style.display = 'none';
             }
         });
 
