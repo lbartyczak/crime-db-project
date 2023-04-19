@@ -31,7 +31,7 @@
 
 <body>
     <div class="container">
-        <h1>Trends in Crime Data in Chicago</h1>
+        <h1>Welcome to the Chicago Crime Database!</h1>
         <h2>Trends in Crime Data in Chicago</h2>
         <div class="row">
             <div class="col-md-4">
@@ -229,6 +229,9 @@
                 chart.data.labels = processedData.labels;
                 chart.data.datasets = datasets;
                 chart.update();
+            }
+            else if (questionId == '7') {
+                
             }
             else if (questionId == '1') {
                 const labels = data.map(item => item[0]);
