@@ -76,14 +76,20 @@ async function getData(questionId) {
 /* COUNT TUPLES */
 async function getCount() {
       result = await connection.execute(`
-      SELECT a.num + b.num 
+      SELECT a.num + b.num + c.num + d.num
       FROM (
-          SELECT COUNT(*) num 
-          FROM cases
+            SELECT COUNT(*) num 
+            FROM Cases
           ) a, (
-          SELECT count(*) num 
-          FROM arrests 
-          ) b
+            SELECT count(*) num 
+            FROM Arrests 
+          ) b, (
+            SELECT COUNT(*) num
+            FROM Victims
+          ) c, (
+            SELECT COUNT(*) num
+            FROM Sentiments
+          ) d
       `);
 
       console.log(result);
@@ -244,7 +250,7 @@ async function query4() {
                     ) c on a.yr = c.yr
             ORDER BY a.yr ASC
             `, data);
-            
+
       console.log(result);
       return result.rows;
 }
@@ -253,7 +259,27 @@ async function query4() {
 /* Does the ratio of no arrests in comparison to crimes each year affect how much Area 5 residents trust in the police? */
 async function query5() {
       result = await connection.execute(`
-            
+            SELECT Scores.year, CrimeRatios.district, ROUND(CrimeArrestRatio, 3) as "No Arrests Made/Total Crimes", ROUND(Scores.trust_scores, 3) as "Avg Trust Scores"
+            FROM (
+                  select district
+                  from Sentiments
+                  where area = 'area_5'
+                  group by district
+            ) DistrictArea
+            JOIN 
+            (
+                  select EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) yr, location_district district, COUNT(case when crime_arrest like 'False' then 1 end)/COUNT(*) as CrimeArrestRatio /*no arrests made/ number of crimes*/
+                  from Cases
+                  group by EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')), location_district
+                  
+            ) CrimeRatios on CrimeRatios.district = DistrictArea.district
+            JOIN 
+            (
+                  select EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')) as year, district,avg(trust) as trust_scores
+                  from Sentiments
+                  group by EXTRACT(YEAR FROM TO_DATE(start_date, 'MM/DD/YYYY')), district
+            ) Scores on CrimeRatios.yr = Scores.year and CrimeRatios.district = Scores.district
+            ORDER BY Scores.year, CrimeRatios.district ASC
       `);
 
       console.log(result);
@@ -261,10 +287,36 @@ async function query5() {
 }
 
 /* QUERY 6 */
-/* */
+/* Of the violent crimes with arrest-to-occurance rates of less than 25% in 2022,
+how has that ratio, and the number of victims of those crimes, changed over the last 5 years? */
 async function query6() {
       result = await connection.execute(`
-            
+      SELECT crimes.quarter, crimes.crime_type, ROUND(
+            Count(case when crimes.crime_arrest like 'True' then 1 end)/count(*), 3) ArrestsRatio, victs.num_victims
+        FROM (
+            SELECT TO_CHAR(TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM'), 'YYYY Q') quarter, 
+                casenumber, crime_arrest, crime_type
+            FROM CASES
+            ) crimes LEFT OUTER JOIN (
+            SELECT TO_CHAR(TO_DATE(time_period_end, 'MM/DD/YYYY'), 'YYYY Q') quarter, 
+                primary_type, sum(number_of_victims) num_victims
+            FROM victims
+            GROUP BY TO_CHAR(TO_DATE(time_period_end, 'MM/DD/YYYY'), 'YYYY Q'), primary_type
+            ) victs ON (crimes.quarter = victs.quarter AND crimes.crime_type = victs.primary_type)
+        WHERE crime_type IN (
+            SELECT  DISTINCT crime_type
+            FROM Cases
+            WHERE crime_type IN (
+                SELECT DISTINCT primary_type
+                FROM victims
+                )
+            AND EXTRACT(YEAR FROM TO_DATE(dateofcrime, 'MM/DD/YYYY HH:MI:SS AM')) = 2022
+            GROUP BY crime_type
+            HAVING count(CASE WHEN crime_arrest like 'True' THEN 1 END) / count(*) < .25
+            )
+        AND TO_DATE(SUBSTR(crimes.quarter, 0, 4), 'yyyy') BETWEEN TO_DATE('2017', 'yyyy') and TO_DATE('2022', 'yyyy')
+        GROUP BY crimes.quarter, crimes.crime_type, victs.num_victims
+        ORDER BY crimes.quarter
       `);
 
       console.log(result);
